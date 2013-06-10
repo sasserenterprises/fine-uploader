@@ -517,6 +517,40 @@ qq.obj2Inputs = function(obj, form) {
     return form;
 };
 
+// Meant to be used internally by Fine Uploader to determine if it should follow
+// CORS-related paths in the code when sending requests.  It compares the
+// `location` of the current `window` to the passed `endpoint`.
+qq.isSameOrigin = function(endpoint) {
+    "use strict";
+
+    var targetAnchor = document.createElement('a'),
+        completeTarget = endpoint,
+        targetProtocol, targetHostname, targetPort;
+
+    // It's non-trivial split up the pieces of a URL, so let's create an anchor
+    // with an href equal to the (cleaned-up) endpoint URL and make use of the
+    // `port` and `hostname` properties available on any [`HTMLAnchorElement`](https://developer.mozilla.org/en-US/docs/Web/API/HTMLAnchorElement).
+    targetAnchor.href = completeTarget;
+    targetProtocol = targetAnchor.protocol;
+    targetPort = targetAnchor.port;
+    targetHostname = targetAnchor.hostname;
+
+    if (targetProtocol.toLowerCase() !== window.location.protocol.toLowerCase()) {
+        return false;
+    }
+
+    if (targetHostname.toLowerCase() !== window.location.hostname.toLowerCase()) {
+        return false;
+    }
+
+    // IE doesn't take ports into consideration when determining if two endpoints are same origin.
+    if (targetPort !== window.location.port && !qq.ie()) {
+        return false;
+    }
+
+    return true;
+}
+
 qq.setCookie = function(name, value, days) {
     var date = new Date(),
         expires = "";
