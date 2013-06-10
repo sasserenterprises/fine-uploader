@@ -523,14 +523,18 @@ qq.obj2Inputs = function(obj, form) {
 qq.isSameOrigin = function(endpoint) {
     "use strict";
 
-    var targetAnchor = document.createElement('a'),
-        completeTarget = endpoint,
-        targetProtocol, targetHostname, targetPort;
+    var targetAnchorContainer = document.createElement('div'),
+        targetAnchor, targetProtocol, targetHostname, targetPort;
 
     // It's non-trivial split up the pieces of a URL, so let's create an anchor
     // with an href equal to the (cleaned-up) endpoint URL and make use of the
     // `port` and `hostname` properties available on any [`HTMLAnchorElement`](https://developer.mozilla.org/en-US/docs/Web/API/HTMLAnchorElement).
-    targetAnchor.href = completeTarget;
+    // Note that we must make use of `innerHTML` here, instead of simply creating an anchor via
+    // `document.createElement('a')` and setting the `href` attribute.  The latter approach does not allow us to
+    // obtain an absolute URL in IE7.
+    targetAnchorContainer.innerHTML = '<a href="' + endpoint + '"></a>';
+    targetAnchor = targetAnchorContainer.firstChild;
+
     targetProtocol = targetAnchor.protocol;
     targetPort = targetAnchor.port;
     targetHostname = targetAnchor.hostname;

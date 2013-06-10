@@ -564,25 +564,25 @@ $(function () {
 
     module('isSameOrigin')
 
-    test('same origin calculation tests', function () {
-        var sameOriginFullUrl = window.location.href,
-            sameOriginRelativeUrl = "/server/upload",
-            sameOriginRelativeUrl2 = "server/upload",
-            differentProtocolUrl = "https://" + window.location.host + ":" + window.location.port,
-            differentHostnameUrl = window.location.protocol + "//foobar.com" + ":" + window.location.port,
-            differentPortUrl = window.location.protocol + "//" + window.location.host + ":999999";
+        test('same origin calculation tests', function () {
+            var sameOriginFullUrl = window.location.href,
+                sameOriginRelativeUrl = "/server/upload",
+                sameOriginRelativeUrl2 = "server/upload",
+                differentProtocolUrl = "https://" + window.location.hostname + ":" + window.location.port,
+                differentHostnameUrl = window.location.protocol + "//foobar.com" + ":" + window.location.port,
+                differentPortUrl = window.location.protocol + "//" + window.location.hostname + ":1980";
 
-        ok(qq.isSameOrigin(sameOriginFullUrl), "same origin full URL");
-        ok(qq.isSameOrigin(sameOriginRelativeUrl), "same origin relative URL");
-        ok(qq.isSameOrigin(sameOriginRelativeUrl2), "same origin relative URL - 2");
-        ok(!qq.isSameOrigin(differentProtocolUrl), "differing protocol");
-        ok(!qq.isSameOrigin(differentHostnameUrl), "differing hostname");
+            ok(qq.isSameOrigin(sameOriginFullUrl), "same origin full URL");
+            ok(qq.isSameOrigin(sameOriginRelativeUrl), "same origin relative URL");
+            ok(qq.isSameOrigin(sameOriginRelativeUrl2), "same origin relative URL - 2");
+            ok(!qq.isSameOrigin(differentProtocolUrl), "differing protocol");
+            ok(!qq.isSameOrigin(differentHostnameUrl), "differing hostname");
 
-        if (qq.ie()) {
-            ok(qq.isSameOrigin(differentPortUrl), "differing port (IE)");
-        }
-        else {
-            ok(!qq.isSameOrigin(differentPortUrl), "differing port (not IE)");
-        }
-    });
+            if (qq.ie()) {
+                ok(qq.isSameOrigin(differentPortUrl), "differing port (IE)");
+            }
+            else {
+                ok(!qq.isSameOrigin(differentPortUrl), "differing port (not IE)");
+            }
+        });
 });
