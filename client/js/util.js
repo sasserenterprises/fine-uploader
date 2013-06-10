@@ -531,7 +531,7 @@ qq.isSameOrigin = function(endpoint) {
     // `port` and `hostname` properties available on any [`HTMLAnchorElement`](https://developer.mozilla.org/en-US/docs/Web/API/HTMLAnchorElement).
     // Note that we must make use of `innerHTML` here, instead of simply creating an anchor via
     // `document.createElement('a')` and setting the `href` attribute.  The latter approach does not allow us to
-    // obtain an absolute URL in IE7.
+    // obtain an absolute URL in IE7 if the `endpoint` is a relative URL.
     targetAnchorContainer.innerHTML = '<a href="' + endpoint + '"></a>';
     targetAnchor = targetAnchorContainer.firstChild;
 
