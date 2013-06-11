@@ -306,6 +306,10 @@ qq.ie       = function(){
     "use strict";
     return navigator.userAgent.indexOf('MSIE') !== -1;
 };
+qq.ie7       = function(){
+    "use strict";
+    return navigator.userAgent.indexOf('MSIE 7') !== -1;
+};
 qq.ie10     = function(){
     "use strict";
     return navigator.userAgent.indexOf('MSIE 10') !== -1;
@@ -528,12 +532,24 @@ qq.isSameOrigin = function(endpoint) {
 
     // It's non-trivial split up the pieces of a URL, so let's create an anchor
     // with an href equal to the (cleaned-up) endpoint URL and make use of the
-    // `port` and `hostname` properties available on any [`HTMLAnchorElement`](https://developer.mozilla.org/en-US/docs/Web/API/HTMLAnchorElement).
-    // Note that we must make use of `innerHTML` here, instead of simply creating an anchor via
-    // `document.createElement('a')` and setting the `href` attribute.  The latter approach does not allow us to
-    // obtain an absolute URL in IE7 if the `endpoint` is a relative URL.
-    targetAnchorContainer.innerHTML = '<a href="' + endpoint + '"></a>';
-    targetAnchor = targetAnchorContainer.firstChild;
+    // `port`, `hostname`, and `protocol` properties available on any
+    // [`HTMLAnchorElement`](https://developer.mozilla.org/en-US/docs/Web/API/HTMLAnchorElement).
+    if (qq.ie7()) {
+        // Note that we must make use of `innerHTML` for IE7 only instead of simply creating an anchor via
+        // `document.createElement('a')` and setting the `href` attribute.  The latter approach does not allow us to
+        // obtain an absolute URL in IE7 if the `endpoint` is a relative URL.
+        targetAnchorContainer.innerHTML = '<a href="' + endpoint + '"></a>';
+        targetAnchor = targetAnchorContainer.firstChild;
+    }
+    else {
+        // IE8 and IE9 do not seem to derive an absolute URL from a relative URL using the `innerHTML`
+        // approach above, so we'll just create an anchor this way and set it's `href` attribute.
+        // Due to yet another quirk in IE8 and IE9, we have to set the `href` equal to itself
+        // in order to ensure relative URLs will be properly parsed.
+        targetAnchor = document.createElement('a');
+        targetAnchor.href = endpoint;
+        targetAnchor.href = targetAnchor.href;
+    }
 
     targetProtocol = targetAnchor.protocol;
     targetPort = targetAnchor.port;
